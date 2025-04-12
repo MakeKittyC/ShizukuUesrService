@@ -13,6 +13,13 @@
       
      <queries>
         <package android:name="adb.shell.shizuku" />
+        <package android:name="com.rosan.dhizuku" />
+        <package android:name="moe.shizuku.privileged.api" />
+        <package android:name="me.weishu.kernelsu" />
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="io.github.vvb2060.magisk" />
+        <package android:name="io.github.huskydg.magisk" />
+        <package android:name="com.android.shell" />
      </queries>
     
     <!-- 运行前台服务 -->
@@ -70,7 +77,7 @@
 
         <activity-alias
              android:label="@string/apps_name"
-             android:name="app.compile.shizuku"
+             android:name="com.android.shell"
              android:exported="true"
              android:targetActivity="app.compile.MainActivity">
             <intent-filter>

@@ -68,6 +68,13 @@ import java.text.SimpleDateFormat
 
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.appcompat.widget.Toolbar
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 /* 
    如果您需要使用自定义R类或其他库中的R类，还请添加import
    示例：import app.compile.R
@@ -191,7 +198,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
             Shizuku.bindUserService(userServiceArgs, serviceConnection)
         }
 
-        // 执行命令
+        /*  非kotlinx协程
         binding.executeCommand.setOnClickListener {
             if (iUserService == null) {
                 Toast.makeText(this, "请先连接 Shizuku 服务", Toast.LENGTH_SHORT).show()
@@ -226,6 +233,58 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 // 直接输出错误信息
                 binding.executeResult.text = e.toString()
                 e.printStackTrace()
+            }
+        }
+        */
+        // Cmd命令执行，Kotlinx协程异步处理
+        binding.executeCommand.setOnClickListener {
+            if (iUserService == null) {
+                Toast.makeText(this, "请先连接 Shizuku 服务", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val command = binding.inputCommand.text.toString().trim()
+
+            // 命令不能为空
+            if (TextUtils.isEmpty(command)) {
+                Toast.makeText(this, "命令不能为空", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 使用协程来执行命令
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    // 使用 StringBuilder 来构建结果
+                    val resultBuilder = StringBuilder()
+
+                    // 异步执行命令，并设置超时
+                    val result = withTimeout(8000) { // 设置超时时间为8秒
+                        exec(command)
+                    }
+
+                    // 检查结果
+                    if (result != null) {
+                        resultBuilder.append(result)
+                    } else {
+                        resultBuilder.append("返回结果为null")
+                    }
+
+                    // 在主线程更新 UI
+                    withContext(Dispatchers.Main) {
+                        binding.executeResult.text = resultBuilder.toString()
+                    }
+                } catch (e: TimeoutCancellationException) {
+                    // 在主线程更新 UI
+                    withContext(Dispatchers.Main) {
+                        binding.executeResult.text = "响应超时"
+                    }
+                } catch (e: Exception) {
+                    // 在主线程更新 UI
+                    withContext(Dispatchers.Main) {
+                        binding.executeResult.text = e.toString()
+                        e.printStackTrace()
+                    }
+                }
             }
         }
     }
