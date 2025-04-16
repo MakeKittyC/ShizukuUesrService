@@ -18,7 +18,7 @@ ShizukuUserService的源代码完全开放
 
 ## IDE环境配置
 
-在编译ShizukuUserService时需要配置Kotlin DSL环境、JDK21、AIDE、Android SDK35
+在编译ShizukuUserService时需要配置Kotlin DSL环境、JDK21、AIDE、Android SDK35、NDK 27.1.12297006
 
 ## 贡献
 
