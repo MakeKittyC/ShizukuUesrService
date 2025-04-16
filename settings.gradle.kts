@@ -13,6 +13,7 @@ dependencyResolutionManagement {
     mavenCentral()
     maven("https://jitpack.io")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+    maven("https://maven.scijava.org/content/repositories/public/")
   }
 }
 

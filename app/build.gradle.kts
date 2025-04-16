@@ -7,6 +7,7 @@ android {
     namespace = "app.compile"
     compileSdk = 35
     buildToolsVersion = "35.0.0"
+    ndkVersion = "27.1.12297006"
     
     packaging {
         jniLibs {
@@ -29,15 +30,30 @@ android {
         vectorDrawables { 
             useSupportLibrary = true
         }
+        
+        externalNativeBuild {
+            cmake {
+                abiFilters("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+                
+            }
+        }
+    }
+    
+    externalNativeBuild {
+        cmake {
+            // CMakeLists.txt 
+            path("src/main/cpp/CMakeLists.txt")
+            
+        }
     }
     
     signingConfigs {
         create("url") {
         // keystore file，.bks & .jks
             storeFile = file("keystore/xiao.keystore")
-            storePassword = findProperty("KEYSTORE_PASSWORD") as String
-            keyAlias = findProperty("KEY_ALIAS") as String
-            keyPassword = findProperty("KEY_PASSWORD") as String
+            storePassword = findProperty("XIAO_KEY_PASSWORD") as String
+            keyAlias = findProperty("XIAO_KEY_ALIAS") as String
+            keyPassword = findProperty("XIAO_KEY_KEYPASSWORD") as String
             
             enableV1Signing = false
             enableV2Signing = true
@@ -109,7 +125,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -122,4 +138,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.annotation:annotation:1.9.1")
+    implementation("androidx.annotation:annotation-experimental:1.4.1")
 }

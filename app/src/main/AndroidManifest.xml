@@ -13,7 +13,6 @@
       
      <queries>
         <package android:name="adb.shell.shizuku" />
-        <package android:name="com.rosan.dhizuku" />
         <package android:name="moe.shizuku.privileged.api" />
         <package android:name="me.weishu.kernelsu" />
         <package android:name="com.topjohnwu.magisk" />
@@ -57,6 +56,7 @@
     
     <application
         android:name="app.compile.SuiApplication"
+        android:process=":bash"
         android:allowBackup="true" 
         android:persistent="true"
         android:vmSafeMode="true"
@@ -90,6 +90,18 @@
         
         <activity
             android:name="app.compile.MainActivity"
+            android:process=":bash"
+            android:immersive="true"
+            android:stateNotNeeded="true"
+            android:launchMode="singleInstancePerTask"
+            android:windowSoftInputMode="adjustPan"
+            android:persistableMode="persistNever"
+            android:enableVrMode="true"
+            android:exported="true" />
+        
+        <activity
+            android:name="app.compile.HelpActivity"
+            android:process=":bash"
             android:immersive="true"
             android:stateNotNeeded="true"
             android:launchMode="singleInstancePerTask"
@@ -105,6 +117,16 @@
            android:enabled="true"
            android:exported="true"
            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+           
+       <provider
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:authorities="adb.shell.shizuku.fileprovider"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file" />
+       </provider>
        
     </application>
 </manifest>

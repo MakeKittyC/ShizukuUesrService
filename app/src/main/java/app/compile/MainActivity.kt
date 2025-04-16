@@ -90,7 +90,9 @@ import kotlinx.coroutines.TimeoutCancellationException
 class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     companion object {
         private const val PERMISSION_CODE = 10001
-        
+        init {
+           System.loadLibrary("native-lib")
+        }
     }
 
     private var shizukuServiceState = false
@@ -258,7 +260,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                     val resultBuilder = StringBuilder()
 
                     // 异步执行命令，并设置超时
-                    val result = withTimeout(8000) { // 设置超时时间为8秒
+                    val result = withTimeout(7000) { // 设置超时时间为7秒
                         exec(command)
                     }
 
@@ -276,7 +278,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 } catch (e: TimeoutCancellationException) {
                     // 在主线程更新 UI
                     withContext(Dispatchers.Main) {
-                        binding.executeResult.text = "响应超时"
+                        binding.executeResult.text = "响应超时，故此无法返回结果"
                     }
                 } catch (e: Exception) {
                     // 在主线程更新 UI
@@ -314,12 +316,19 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
             iUserService?.execLine(command)
         }
     } */
+    external fun getSystemBinPath(): String
+    external fun getPrivateBinPath(): String
+    external fun getKsuBinPath(): String
+    external fun getVendorBinPath(): String
+    external fun getSystemsBinPath(): String
+    
      @Throws(RemoteException::class)
     private fun exec(command: String): String? {
-          val systemBinPath = "/system/bin/"
-         val privateBinPath = "/sdcard/Android/data/adb.shell.shizuku/files/shizuku/"
-         val vendorBinPath = "/vendor/bin/"
-          val sysextBinPath = "/system_ext/bin/"
+          val systemBinPath = getSystemBinPath()
+         val privateBinPath = getPrivateBinPath()
+          val ksuBinPath = getKsuBinPath()
+         val vendorBinPath = getVendorBinPath()
+          val sysextBinPath = getSystemsBinPath()
 
          // 匹配命令和参数
         val pattern = Pattern.compile("\"([^\"]*)\"|(\\S+)")
@@ -359,6 +368,13 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
               commandList[0] = customCommandName
               result = iUserService?.execArr(commandList.toTypedArray())
           }
+          
+          // 尝试使用 /data/adb/ksu/bin/ 路径
+          if (result.isNullOrEmpty()) {
+              val customCommandName = "$ksuBinPath${commandName.removePrefix(systemBinPath)}"
+              commandList[0] = customCommandName
+              result = iUserService?.execArr(commandList.toTypedArray())
+          }
 
           // 如果仍然没有结果，尝试使用 /vendor/bin/ 路径
           if (result.isNullOrEmpty()) {
@@ -392,7 +408,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     private val userServiceArgs = Shizuku.UserServiceArgs(
         ComponentName(BuildConfig.APPLICATION_ID, UserService::class.java.name)
     )
-        .daemon(false)
+        .daemon(true)
         .processNameSuffix("rish")
         .debuggable(BuildConfig.DEBUG)
         .version(BuildConfig.VERSION_CODE)
@@ -475,6 +491,12 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
            }
               R.id.action_main_2 -> {
                   Toast.makeText(this, "已跑路，望周知……", Toast.LENGTH_SHORT).show()
+                true
+           }
+              R.id.action_main_3 -> {
+                  Toast.makeText(this, "正在努力插入Rikka的小穴穴", Toast.LENGTH_SHORT).show()
+              val intent = Intent(this, HelpActivity::class.java)
+                    startActivity(intent)
                 true
            }
              else -> super.onOptionsItemSelected(item)
