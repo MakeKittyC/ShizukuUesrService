@@ -41,12 +41,14 @@ import android.content.pm.PackageManager
 
 import android.widget.Toast
 
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.compile.databinding.ActivityMainBinding
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Lifecycle
+import androidx.annotation.Keep
 
 import rikka.shizuku.Shizuku
 
@@ -55,6 +57,7 @@ import java.io.FileWriter
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.io.IOException
 import java.io.BufferedReader
 import java.io.FileReader
@@ -66,6 +69,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.text.SimpleDateFormat
 
+import com.google.gson.Gson
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.appcompat.widget.Toolbar
 
@@ -87,6 +91,7 @@ import kotlinx.coroutines.TimeoutCancellationException
    示例：app.compile.binding.android.setOnClickListener
    示例：app.compile.binding.android.text
 */
+@Keep
 class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     companion object {
         private const val PERMISSION_CODE = 10001
@@ -486,7 +491,8 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
            return when (item.itemId) {
               R.id.action_main_1 -> {
-            Toast.makeText(this, "喵~", Toast.LENGTH_SHORT).show()
+                 Toast.makeText(this, "喵~", Toast.LENGTH_SHORT).show()
+                 openLink("https://github.com/MakeKittyC/ShizukuUesrService")
                true
            }
               R.id.action_main_2 -> {
@@ -495,12 +501,63 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
            }
               R.id.action_main_3 -> {
                   Toast.makeText(this, "正在努力插入Rikka的小穴穴", Toast.LENGTH_SHORT).show()
-              val intent = Intent(this, HelpActivity::class.java)
-                    startActivity(intent)
+                  showJsonDialog()
                 true
            }
              else -> super.onOptionsItemSelected(item)
         }
         
+    }
+    
+    private fun showJsonDialog() {
+        val jsonString = readJsonFromAssets("User-Help.json")
+        val gson = Gson()
+        val jsonData = gson.fromJson(jsonString, JsonData::class.java)
+
+        val contentBuilder = StringBuilder()
+        for (line in jsonData.content) {
+            contentBuilder.append(line).append("\n")
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(jsonData.title)
+            .setMessage(contentBuilder.toString())
+            .setPositiveButton("我已了解") { dialog, _ -> dialog.dismiss()
+                 Toast.makeText(this, "您已同意让开发者插入您的小穴穴！", Toast.LENGTH_SHORT).show()
+            }
+            .setCancelable(false)
+            .create()
+
+        dialog.show()
+    }
+
+    private fun readJsonFromAssets(fileName: String): String {
+        val inputStream = assets.open(fileName)
+        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+        return bufferedReader.use { it.readText() }
+    }
+    
+    private fun openLink(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        val browsers = listOf("com.android.chrome", "com.chrome.beta", "com.chrome.dev", "com.chrome.canary", "com.android.browser")
+
+        var isBrowserFound = false
+
+        for (browser in browsers) {
+            intent.setPackage(browser)
+            try {
+                startActivity(intent) // 尝试启动指定的浏览器
+                isBrowserFound = true
+                break // 成功启动后退出循环
+            } catch (e: Exception) {
+                // 捕获异常，继续尝试下一个浏览器
+            }
+        }
+
+        // 如果没有找到已安装的浏览器，使用默认浏览器
+        if (!isBrowserFound) {
+            intent.setPackage(null)
+            startActivity(intent)
+        }
     }
 }

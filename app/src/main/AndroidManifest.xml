@@ -98,17 +98,6 @@
             android:persistableMode="persistNever"
             android:enableVrMode="true"
             android:exported="true" />
-        
-        <activity
-            android:name="app.compile.HelpActivity"
-            android:process=":bash"
-            android:immersive="true"
-            android:stateNotNeeded="true"
-            android:launchMode="singleInstancePerTask"
-            android:windowSoftInputMode="adjustPan"
-            android:persistableMode="persistNever"
-            android:enableVrMode="true"
-            android:exported="true" />
        
        <provider
            android:name="rikka.shizuku.ShizukuProvider"
