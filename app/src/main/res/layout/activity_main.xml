@@ -88,6 +88,7 @@
             android:text="判断权限"
             android:id="@+id/judge_permission"
             android:layout_weight="1"
+            android:layout_marginEnd="6dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
@@ -95,6 +96,7 @@
             android:text="申请权限"
             android:id="@+id/request_permission"
             android:layout_weight="1"
+            android:layout_marginEnd="6dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 

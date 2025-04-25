@@ -32,6 +32,8 @@ import java.io.BufferedReader
 
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
+
+import androidx.annotation.Keep
 /* 
    如果您需要使用自定义R类或其他库中的R类，还请添加import
    示例：import app.compile.R
@@ -44,6 +46,7 @@ import kotlin.jvm.JvmName
    示例：app.compile.binding.android.setOnClickListener
    示例：app.compile.binding.android.text
 */
+@Keep
 class SuiApplication : Application() {
 
     companion object {
@@ -86,10 +89,8 @@ class SuiApplication : Application() {
             
         } else {
           // 可以在这里执行其他操作，比如关闭应用或显示警告
-          showLongToast("官方签名已被寡改，注意代码执行安全！") {
-            // 在 Toast 结束后执行的下一个任务
-        // 如果需要签名校验失败后的逻辑，那么还请取消注释    SystemStartTask()
-            }
+          Toast.makeText(this, "官方签名已被寡改，注意代码执行安全！", Toast.LENGTH_LONG).show()
+                SystemStartTask()
         }
     }
     
@@ -184,7 +185,7 @@ class SuiApplication : Application() {
     
     private fun SystemStartTask() {
         try {
-            Thread.sleep(7000)
+            Thread.sleep(1000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         } finally {
@@ -192,29 +193,10 @@ class SuiApplication : Application() {
         }
     }
     
-    fun showLongToast(message: String, onToastHidden: () -> Unit) {
-        Thread {
-            // 显示 Toast
-            Handler(Looper.getMainLooper()).post {
-                val toast = Toast.makeText(applicationContext, message, Toast.LENGTH_LONG)
-                toast.show()
-
-                // 延迟 7 秒后结束 Toast
-                Handler(Looper.getMainLooper()).postDelayed({
-                    toast.cancel()
-                    onToastHidden()
-                }, 7000) // 7000 毫秒 = 7 秒
-            }
-        }.start()
-    }
-
     private fun StartApplication() {
         // 结束并停止进程
-        val handler = Handler(Looper.getMainLooper())
-        handler.post {
-            Process.killProcess(Process.myPid())
-            System.exit(0)
-            terminateProcess()
-        }
+        System.exit(1)
+        terminateProcess()
+        Process.killProcess(Process.myPid())
     }
 }

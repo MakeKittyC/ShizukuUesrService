@@ -22,8 +22,8 @@ android {
         applicationId = "adb.shell.shizuku"
         minSdk = 24
         targetSdk = 35
-        versionCode = 10
-        versionName = "v0.0.11"
+        versionCode = 11
+        versionName = "v0.0.13"
         
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -130,7 +130,6 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.10.1")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("dev.rikka.shizuku:api:$shizuku_version")
     implementation("dev.rikka.shizuku:provider:$shizuku_version")
     implementation(fileTree("configs") { include("*.jar") })
