@@ -6,6 +6,7 @@ import android.os.RemoteException
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import androidx.annotation.Keep
 /* 
    如果您需要使用自定义R类或其他库中的R类，还请添加import
    示例：import app.compile.R
@@ -18,6 +19,7 @@ import java.io.InputStreamReader
    示例：app.compile.binding.android.setOnClickListener
    示例：app.compile.binding.android.text
 */
+@Keep
 public class UserService : IUserService.Stub() {
 
     @Throws(RemoteException::class)

@@ -268,22 +268,29 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                     val result = withTimeout(7000) { // 设置超时时间为7秒
                         exec(command)
                     }
-
-                    // 检查结果
-                    if (result != null) {
-                        resultBuilder.append(result)
-                    } else {
-                        resultBuilder.append("返回结果为null")
-                    }
-
+                    
+                    // 移除空处理，直接返回结果
+                    resultBuilder.append(result)
+                     
                     // 在主线程更新 UI
-                    withContext(Dispatchers.Main) {
+                  withContext(Dispatchers.Main) {
                         binding.executeResult.text = resultBuilder.toString()
-                    }
+                   }
                 } catch (e: TimeoutCancellationException) {
                     // 在主线程更新 UI
                     withContext(Dispatchers.Main) {
                         binding.executeResult.text = "响应超时，故此无法返回结果"
+                    }
+                } catch (e: InterruptedException) {
+                    withContext(Dispatchers.Main) {
+                        binding.executeResult.text = e.toString()
+                        e.printStackTrace()
+                    }
+                } catch (e: IOException) {
+                    // 在主线程更新 UI
+                    withContext(Dispatchers.Main) {
+                        binding.executeResult.text = e.toString()
+                        e.printStackTrace()
                     }
                 } catch (e: Exception) {
                     // 在主线程更新 UI
