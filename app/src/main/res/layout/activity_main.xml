@@ -54,22 +54,33 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
+        
+  <com.google.android.material.textfield.TextInputLayout
+       android:layout_width="0dp"
+       android:layout_height="wrap_content"
+       android:layout_weight="1"
+       android:layout_margin="7dp"
+       android:backgroundTint="@color/text_hint_Color"
+       android:textColorHint="@color/text_hint_Color"
+       android:hint="执行之前应检查其中是否包含恶意命令">
 
-        <EditText
+       <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_command"
-            android:hint="默认使用/system/bin/"
             android:backgroundTint="@color/image_theme"
             android:textColor="@color/image_text"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:padding="8dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
             android:scrollHorizontally="true"/>
+           
+</com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:text="执行命令"
             android:id="@+id/execute_command"
+            android:layout_marginTop="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

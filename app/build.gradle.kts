@@ -22,8 +22,8 @@ android {
         applicationId = "adb.shell.shizuku"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12
-        versionName = "v0.0.15"
+        versionCode = 13
+        versionName = "v0.0.16"
         
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
