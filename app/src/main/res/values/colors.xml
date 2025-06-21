@@ -4,8 +4,8 @@
     <color name="image_text">#8832F5</color>
     <!-- Activity Color -->
     <color name="layout_background">#CCDFDFDF</color>
-    <color name="layout_backgroundTint">#E1A9F4</color>
-    <color name="tools_backgroundTint">#E4B2F5</color>
+    <color name="layout_backgroundTint">#FFE1B0FF</color>
+    <color name="tools_backgroundTint">#FFE1B0FF</color>
     <color name="text_hint_Color">#FF9612ED</color>
     
 </resources>

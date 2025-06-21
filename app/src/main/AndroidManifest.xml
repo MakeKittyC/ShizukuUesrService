@@ -20,7 +20,7 @@
         <package android:name="io.github.huskydg.magisk" />
         <package android:name="com.android.shell" />
      </queries>
-    
+     
     <!-- 运行前台服务 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- 运行「dataSync」类型的前台服务 -->
@@ -49,6 +49,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
     <!-- 运行「remoteMessaging」类型的前台服务 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
+    <!-- 在后台运行 -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND" />
+    <!-- 在后台使用数据 -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_USE_DATA_IN_BACKGROUND" />
     <!-- 以高采样率访问传感器数据 -->
     <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS" />
     <!-- Shizuku V23 -->

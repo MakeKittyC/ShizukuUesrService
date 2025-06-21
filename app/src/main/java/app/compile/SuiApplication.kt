@@ -67,15 +67,6 @@ class SuiApplication : Application() {
         }
         
     }
-    
-    external fun terminateProcess()
-    external fun getXpConstant(): Int
-    external fun getXpStringConstant(): String
-    external fun getXpsStringConstant(): String
-    private val XposedModulusSize = getXpConstant() // 签名 模数大小
-    private val XposedSerialNumber = getXpStringConstant() // 签名 序列号
-    private val XposedSinMain = getXpsStringConstant() // 签名 原始数据
-    private val XposedPublicExponent = BigInteger.valueOf(65537) // 签名 公钥指数
 
     override fun onCreate() {
         super.onCreate()
@@ -84,103 +75,7 @@ class SuiApplication : Application() {
         // 多进程支持，
             ShizukuProvider.requestBinderForNonProviderProcess(this)
         }
-        
-        if (XposedStartMian() && XposedStartPublicKey() && XposedStartRaw()) {
-            
-        } else {
-          // 可以在这里执行其他操作，比如关闭应用或显示警告
-          Toast.makeText(this, "官方签名已被寡改，注意代码执行安全！", Toast.LENGTH_LONG).show()
-                SystemStartTask()
-        }
-    }
-    
-    private fun XposedStartMian(): Boolean {
-        return try {
-            val packageInfo: PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-            val signingInfo = packageInfo.signingInfo
-            val signatures = signingInfo?.apkContentsSigners
-            val currentSignature = signatures?.get(0) ?: return false
-
-            // 获取 签名 证书并获取 签名 序列号
-            val certFactory = CertificateFactory.getInstance("X.509")
-            val cert = certFactory.generateCertificate(currentSignature.toByteArray().inputStream()) as X509Certificate
-            val serialNumber = cert.serialNumber.toString()
-
-            serialNumber == XposedSerialNumber
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
-
-    private fun XposedStartIO() {
-        try {
-            val packageInfo: PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-            val signingInfo = packageInfo.signingInfo
-            val signatures = signingInfo?.apkContentsSigners
-            val currentSignature = signatures?.get(0) ?: return
-
-            // 获取 签名 证书
-            val certFactory = CertificateFactory.getInstance("X.509")
-            val cert = certFactory.generateCertificate(currentSignature.toByteArray().inputStream()) as X509Certificate
-
-            // 获取 签名 有效期
-            val currentNotBefore = cert.notBefore
-            val currentNotAfter = cert.notAfter
-
-            // 预期有效期开始和结束日期
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd 'GMT'XXX HH:mm:ss", Locale.getDefault())
-            
-            Toast.makeText(this, "有效期始: ${dateFormat.format(currentNotBefore)}", Toast.LENGTH_LONG).show()
-            Toast.makeText(this, "有效期至: ${dateFormat.format(currentNotAfter)}", Toast.LENGTH_LONG).show()
-            
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun XposedStartPublicKey(): Boolean {
-        return try {
-            val packageInfo: PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-            val signingInfo = packageInfo.signingInfo
-            val signatures = signingInfo?.apkContentsSigners
-            val currentSignature = signatures?.get(0) ?: return false
-
-            val certFactory = CertificateFactory.getInstance("X.509")
-            val cert = certFactory.generateCertificate(currentSignature.toByteArray().inputStream()) as X509Certificate
-            val publicKey = cert.publicKey
-
-            // 获取 签名 公钥的模数和指数
-            val keyFactory = KeyFactory.getInstance("RSA")
-            val keySpec = keyFactory.getKeySpec(publicKey, RSAPublicKeySpec::class.java)
-
-            val modulus = keySpec.modulus
-            val publicExponent = keySpec.publicExponent
-
-            // 验证 签名 模数大小和公钥 签名 指数
-            modulus.bitLength() == XposedModulusSize && publicExponent == XposedPublicExponent
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
-
-    private fun XposedStartRaw(): Boolean {
-        return try {
-            val packageInfo: PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-            val signingInfo = packageInfo.signingInfo
-            val signatures = signingInfo?.apkContentsSigners ?: return false
-
-            val currentSignature = signatures[0]
-
-            // 获取 签名 原始数据
-            val rawSignature = currentSignature.toCharsString()
-
-            rawSignature == XposedSinMain
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
+        SystemStartTask()
     }
     
     private fun SystemStartTask() {
@@ -189,14 +84,6 @@ class SuiApplication : Application() {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         } finally {
-            StartApplication()
         }
-    }
-    
-    private fun StartApplication() {
-        // 结束并停止进程
-        System.exit(1)
-        terminateProcess()
-        Process.killProcess(Process.myPid())
     }
 }
